@@ -5,6 +5,7 @@ import lib.Platform;
 import lib.ui.NavigationUI;
 import lib.ui.android.AndroidNavigatorUI;
 import lib.ui.ios.IosNavigatorUI;
+import lib.ui.mobile_web.MWNavigatorUI;
 import org.openqa.selenium.remote.RemoteWebDriver;
 
 public class NavigatonUIFactory
@@ -13,8 +14,10 @@ public class NavigatonUIFactory
     {
         if (Platform.getInstance().isAndroid()) {
             return new AndroidNavigatorUI(driver);
-        } else {
+        } else if (Platform.getInstance().isIos()) {
             return new IosNavigatorUI(driver);
+        } else {
+            return new MWNavigatorUI(driver);
         }
     }
 }

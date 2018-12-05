@@ -12,6 +12,7 @@ abstract public class ArticlePageObject extends MainPageObject
             FOOTER_ELEMENT,
             OPTIONS_BUTTON,
             OPTIONS_ADD_TO_MY_LIST_BUTTON,
+            OPTIONS_REMOVE_FROM_MY_LIST_BUTTON,
             ADD_TO_MY_LIST_OVERLAY,
             MY_LIST_NAME_INPUT,
             MY_LIST_OK_BUTTON,
@@ -39,8 +40,10 @@ abstract public class ArticlePageObject extends MainPageObject
         WebElement title_element = waitForTitleElement();
         if (Platform.getInstance().isAndroid()) {
             return title_element.getAttribute("text");
-        } else {
+        } else if (Platform.getInstance().isIos()) {
             return title_element.getAttribute("name");
+        } else {
+            return title_element.getText();
         }
     }
 
@@ -48,8 +51,10 @@ abstract public class ArticlePageObject extends MainPageObject
     {
         if (Platform.getInstance().isAndroid()){
             this.swipeUpToFindElement(FOOTER_ELEMENT,"Не найден конец страницы",70);
-        } else {
+        } else if (Platform.getInstance().isIos()){
             this.swipeUpTitleElementAppear(FOOTER_ELEMENT,"Не найден конец страницы",70);
+        } else {
+            this.scrollWebPageTillElementNotVisible(FOOTER_ELEMENT,"Не найден конец страницы",70);
         }
     }
 
@@ -92,7 +97,18 @@ abstract public class ArticlePageObject extends MainPageObject
 
     public void addArticleToMySaved()
     {
+        if (Platform.getInstance().isMw()) {
+            this.deleteArticleFromMySaved();
+        }
         this.waitForElementAndClick(OPTIONS_ADD_TO_MY_LIST_BUTTON, "Не удалось добавить статью в список", 10);
+    }
+
+    public void deleteArticleFromMySaved()
+    {
+        if (this.isElementPresent(OPTIONS_REMOVE_FROM_MY_LIST_BUTTON)){
+            this.waitForElementAndClick(OPTIONS_REMOVE_FROM_MY_LIST_BUTTON, "Не кликнуть на удаление статьи", 5);
+        }
+        this.waitForElementPresent(OPTIONS_ADD_TO_MY_LIST_BUTTON, "Не удалось найти кнопку добавления после удаления статьи, 5");
     }
 
     public void closeOnboardingButton()
@@ -102,8 +118,12 @@ abstract public class ArticlePageObject extends MainPageObject
 
     public void closeArticle()
     {
-        this.waitForElementPresent(CLOSE_ARTICLE_BUTTON, "Не найден крестик");
-        this.waitForElementAndClick(CLOSE_ARTICLE_BUTTON,"Не удалось закрыть статью",15);
+        if (!Platform.getInstance().isMw()) {
+            this.waitForElementPresent(CLOSE_ARTICLE_BUTTON, "Не найден крестик");
+            this.waitForElementAndClick(CLOSE_ARTICLE_BUTTON, "Не удалось закрыть статью", 15);
+        } else {
+            System.out.println("Не требуется закрывать статью");
+        }
     }
 
     public void assertPageTitle()

@@ -10,7 +10,7 @@ public class GetStartedTest extends CoreTestCase
     @Test
     public void testPassThroughWelcome()
     {
-        if (Platform.getInstance().isAndroid()) {
+        if (!Platform.getInstance().isIos()) {
             return;
         }
         WelcomePageObject WelcomePageObject = new WelcomePageObject(driver);
